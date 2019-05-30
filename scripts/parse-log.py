@@ -11,14 +11,20 @@ total_data = 0
 resource_counts = {}
 host_counts = {}
 status_counts = {}
-pattern = re.compile('([^\s]+)\s([^\s]+)\s([^\s]+)\s\[([^\]]+)\]\s"([^\s]+)\s([^\s]+)\s([^"]+)"\s([0-9]+)\s([0-9]+)')
+pattern = re.compile('^([^\s]+)\s([^\s]+)\s([^\s]+)\s\[([^\]]+)\]\s"([^\s]+)\s([^\s]+)\s([^"]+)"\s([0-9]+)\s([^\s]+).*')
 with open(path, 'r') as handle:
 	for line in handle:
 		matches = re.match(pattern, line)
-		remotehost = matches.group(1)
-		resource = matches.group(6)
-		status = int(matches.group(8))
-		bytes = int(matches.group(9))
+		try:
+			remotehost = matches.group(1)
+			resource = matches.group(6)
+			status = int(matches.group(8))
+			try:
+				bytes = int(matches.group(9))
+			except:
+				bytes = 0
+		except Exception as e:
+			continue
 
 		total_requests += 1
 		total_data += bytes
